@@ -1,0 +1,18 @@
+{
+  "name": "ICO Scout – Cruscotto Datalogger (ICO Power)",
+  "short_name": "ICO Scout",
+  "description": "Lettura live dell'analizzatore di rete via MQTT, dal datalogger ICO Scout (ICO Power).",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#121211",
+  "theme_color": "#14532d",
+  "lang": "it",
+  "dir": "ltr",
+  "icons": [
+    { "src": "icona-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icona-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icona-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}
