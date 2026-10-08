@@ -7,7 +7,7 @@
    Quando modifichi index.html o app.js, alza il numero di VERSIONE:
    altrimenti il telefono continua a mostrare la copia vecchia.
    ===================================================================== */
-var VERSIONE = "cruscotto-fv-v40";   // 08/10/2026: intestazione verdino come il cruscotto PC
+var VERSIONE = "cruscotto-fv-v41";   // 08/10/2026: sola lettura per i colleghi (?lettura=Nome)
 var GUSCIO = [
   "./",
   "index.html",

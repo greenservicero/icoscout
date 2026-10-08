@@ -24,9 +24,30 @@ var CFG_DEF = {   /* copia ONLINE (GitHub Pages): predefinito il broker EMQX su 
   topic: "icopower/impianto01/analizzatore",
   settore: "",
   user:  "icoscout01",
-  pass:  ""
+  pass:  "",
+  sola:  ""      /* "1" = sola lettura (colleghi): il settore non si puo' cambiare */
 };
 var cfg = leggiCfg();
+
+/* 08/10/2026: indirizzo per i colleghi in sola lettura, es.
+   https://greenservicero.github.io/icoscout/?lettura=Piercarlo
+   Imposta l'utente, attiva la sola lettura e lo ricorda sul telefono;
+   poi l'indirizzo si ripulisce, cosi' l'icona sulla schermata Home
+   apre l'app normale con queste impostazioni gia' salvate. */
+(function () {
+  try {
+    var q = new URLSearchParams(location.search);
+    var chi = q.get("lettura");
+    if (chi) {
+      if (cfg.user !== chi) cfg.pass = "";
+      cfg.user = chi; cfg.sola = "1"; salvaCfg();
+      history.replaceState(null, "", location.pathname);
+    } else if (q.has("completo")) {      /* torna alla versione con comandi */
+      cfg.user = CFG_DEF.user; cfg.pass = ""; cfg.sola = ""; salvaCfg();
+      history.replaceState(null, "", location.pathname);
+    }
+  } catch (e) {}
+})();
 
 function leggiCfg() {
   var c = {};
@@ -723,7 +744,13 @@ function disegna() {
 cfg.settore = chiaveSettore(cfg.settore || "");
 $("selSettore").value = SETTORI[cfg.settore] ? cfg.settore : "";
 var settorePendente = null, pendenteDal = 0;
+if (cfg.sola === "1") {
+  ["selSettore", "fSettore"].forEach(function (id) {
+    var e = $(id); if (e) { e.disabled = true; e.title = "Sola lettura: il settore lo imposta Ferdinando"; }
+  });
+}
 function inviaSettore(v) {
+  if (cfg.sola === "1") return;   /* sola lettura: nessun comando all'ESP32 */
   if (!client || !client.connected) {
     nota("Settore non inviato all'ESP32: l'app non e' collegata al broker.", true);
     return;
