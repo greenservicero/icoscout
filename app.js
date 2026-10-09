@@ -119,14 +119,17 @@ var I_MIN_THD = 0.5;
    salvate prima del 06/10. */
 var BETA_GENERICO = 0.14;
 var SETTORI = {
+  /* 09/10/2026 (decisione di Ferdinando): mediane del file Calcolo_VDE_per_sito
+     dell'08/10 (172 punti PEL, 149 inclusi). Stessa tabella del firmware. */
   fastfood:     { nome: "Fast food",            beta: 0.06  },
-  riposo:       { nome: "Case di riposo",       beta: 0.125 },
-  hotel:        { nome: "Hotel",                beta: 0.13  },
-  logistica:    { nome: "Logistica",            beta: 0.13  },
-  supermercati: { nome: "Supermercati / GDO",   beta: 0.135 },   /* 07/10/2026: 25 siti (prima 0,155) */
-  industria:    { nome: "Industria",            beta: 0.155 },
-  freddo:       { nome: "Logistica del freddo", beta: 0.17  },
-  uffici:       { nome: "Uffici",               beta: 0.19  }
+  riposo:       { nome: "Case di riposo",       beta: 0.126 },
+  hotel:        { nome: "Hotel",                beta: 0.132 },
+  logistica:    { nome: "Logistica",            beta: 0.132 },
+  supermercati: { nome: "Supermercati / GDO",   beta: 0.134 },
+  commercio:    { nome: "Commercio non alimentare", beta: 0.158 },
+  industria:    { nome: "Industria",            beta: 0.174 },
+  freddo:       { nome: "Logistica del freddo", beta: 0.174 },
+  uffici:       { nome: "Uffici",               beta: 0.187 }
 };
 var ALIAS_SETTORE = { motel: "hotel", plastica: "industria", meccanica: "industria" };
 function chiaveSettore(k) { return ALIAS_SETTORE[k] || k; }
