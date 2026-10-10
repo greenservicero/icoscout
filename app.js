@@ -234,6 +234,18 @@ function nota(testo, errore) {
   n.className = errore ? "nota err" : "nota";
 }
 
+/* 10/10/2026: cliente in prova, come lo conferma l'ESP32 sul topic
+   .../cliente/attivo (retained; "-" = nessuno). Solo visualizzazione. */
+function mostraClienteAttivo(testo) {
+  var v = String(testo || "").replace(/[;"\u0000-\u001f\u007f]/g, " ").replace(/ {2,}/g, " ").trim();
+  if (v === "-") v = "";
+  var p = $("cliSd"), tx = $("cliSdTxt");
+  if (!p || !tx) return;
+  p.className = v ? "pill on" : "pill";
+  tx.textContent = v || "nessun cliente";
+  p.title = "Cliente registrato sulla SD: " + (v || "nessuno");
+}
+
 /* ---------- connessione ---------- */
 function collega() {
   if (client) { try { client.end(true); } catch (e) {} client = null; }
@@ -267,6 +279,7 @@ function collega() {
 
   client.on("connect", function () {
     setStato("on", "Collegato");
+    client.subscribe(cfg.topic + "/cliente/attivo", { qos: 1 });   // 10/10/2026: cliente in prova
     client.subscribe(cfg.topic, function (err) {
       if (err) { nota("Iscrizione al topic fallita: " + esc(String(err)), true); return; }
       nota("In ascolto su <code>" + esc(cfg.topic) + "</code>. Un campione ogni 2 secondi.");
@@ -285,6 +298,7 @@ function collega() {
   });
 
   client.on("message", function (_topic, payload) {
+    if (/\/cliente\/attivo$/.test(_topic)) { mostraClienteAttivo(payload.toString()); return; }
     var c;
     try { c = JSON.parse(payload.toString()); }
     catch (e) { return; }                   /* payload non JSON: ignorato */

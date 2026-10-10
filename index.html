@@ -299,6 +299,10 @@ button.pri { background: var(--accent); border-color: var(--accent); color: var(
 }
 .sw-btn[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-txt); }
 /* 02/10/2026: tendina del settore sulla schermata principale */
+/* 10/10/2026: cliente in prova, come lo conferma lo strumento (solo lettura) */
+.cliente-riga { display: flex; align-items: center; gap: 8px; margin: 0 0 10px; min-width: 0; }
+.cliente-riga .lbl { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--text-muted); font-weight: 650; flex: none; }
+.cliente-riga .pill { min-width: 0; max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
 .settore-riga { display: flex; align-items: center; gap: 8px; margin: 0 0 10px; }
 .settore-riga label { font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--text-muted); font-weight: 650; }
 .settore-riga select { flex: 1; font: inherit; font-size: 16px; color: var(--text-primary); background: var(--surface-0);
@@ -349,6 +353,11 @@ button.pri { background: var(--accent); border-color: var(--accent); color: var(
     <div class="n" id="heroN">in attesa del primo campione</div>
     <div class="verso" id="heroVerso" hidden></div>
   </section>
+
+  <div class="cliente-riga">
+    <span class="lbl">Cliente</span>
+    <span class="pill wait" id="cliSd"><span class="dot"></span><span id="cliSdTxt">non ancora noto</span></span>
+  </div>
 
   <div class="settore-riga">
     <label for="selSettore">Settore</label>
