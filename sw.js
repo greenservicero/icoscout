@@ -7,7 +7,8 @@
    Quando modifichi index.html o app.js, alza il numero di VERSIONE:
    altrimenti il telefono continua a mostrare la copia vecchia.
    ===================================================================== */
-var VERSIONE = "cruscotto-fv-v45";   // 17/10/2026 sera: Coefficienti VDE sempre visibile, settore in attesa al cambio strumento
+var VERSIONE = "cruscotto-fv-v46";   // 17/10/2026 notte: invio ogni 30 s, avviso "nessun dato" a 75 s
+// v45: 17/10/2026 sera: Coefficienti VDE sempre visibile, settore in attesa al cambio strumento
 //   // 17/10/2026: scelta dello strumento ICO Scout 01-04
 //   // 10/10/2026: cliente in prova (solo lettura)
 //   // 09/10/2026: beta di settore aggiornati (lotto 08/10) e settore commercio

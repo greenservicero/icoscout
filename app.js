@@ -82,7 +82,7 @@ function unitaDaTopic(t) {
 }
 
 /* ---------- stato ---------- */
-var MAX = 2000;               /* campioni tenuti in memoria: oltre un'ora a 2 s */
+var MAX = 2000;               /* campioni tenuti in memoria: circa 16 ore a 30 s */
 var dati = [];
 var client = null;
 var ricevuti = 0;
@@ -298,7 +298,7 @@ function collega() {
     client.subscribe(cfg.topic + "/cliente/attivo", { qos: 1 });   // 10/10/2026: cliente in prova
     client.subscribe(cfg.topic, function (err) {
       if (err) { nota("Iscrizione al topic fallita: " + esc(String(err)), true); return; }
-      nota("In ascolto su <code>" + esc(cfg.topic) + "</code>. Un campione ogni 2 secondi.");
+      nota("In ascolto su <code>" + esc(cfg.topic) + "</code>. Un campione ogni 30 secondi.");
     });
   });
 
@@ -966,7 +966,7 @@ $("btnSalva").addEventListener("click", function () {
 
 /* ---------- sentinella: i campioni hanno smesso di arrivare? ---------- */
 setInterval(function () {
-  if (ricevuti && Date.now() - ultimoArrivo > 12000) {
+  if (ricevuti && Date.now() - ultimoArrivo > 75000) {
     setStato("off", "Fermo da " + Math.round((Date.now() - ultimoArrivo) / 1000) + " s");
   }
 }, 3000);
