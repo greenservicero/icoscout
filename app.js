@@ -453,7 +453,9 @@ function riquadri() {
           f: function () { return "—"; },
           n: function () { return "firmware senza calcolo VDE"; } },
 
-    gradiniVde.length
+    /* 17/10/2026: visibile anche in attesa del primo campione (prima compariva
+       solo dopo, e la schermata cambiava forma) */
+    (gradiniVde.length || !c)
       ? { k: "Coefficienti VDE", u: "",
           /* 02/10/2026: beta e x dal firmware; THDv < 5 % = condizione della norma */
           f: function (c) { var b = betaSettore(c, cfg.settore); return isFinite(b) ? "β " + num(b, 3) : "—"; },
@@ -753,8 +755,10 @@ function disegna() {
         nota("L'ESP32 non ha confermato il nuovo settore: resta «" + (fw || "generico") + "».", true);
       }
     }
-    if (settorePendente === null && (fw === "" || SETTORI[fw]) && cfg.settore !== fw) {
+    if (settorePendente === null && (fw === "" || SETTORI[fw]) && (cfg.settore !== fw || settoreInAttesa)) {
       cfg.settore = fw; salvaCfg();
+      settoreInAttesa = false;
+      var oa = $("selSettore").querySelector('option[value="attesa"]'); if (oa) oa.remove();
       ["selSettore", "fSettore"].forEach(function (id) { var e = $(id); if (e) e.value = fw; });
     }
   }
@@ -777,6 +781,20 @@ function disegna() {
 cfg.settore = chiaveSettore(cfg.settore || "");
 $("selSettore").value = SETTORI[cfg.settore] ? cfg.settore : "";
 var settorePendente = null, pendenteDal = 0;
+/* 17/10/2026: dopo un cambio di strumento il settore resta «in attesa» finche'
+   lo strumento non dichiara il suo nel payload: prima restava in vista quello
+   dello strumento precedente. L'opzione non si puo' scegliere e non invia nulla. */
+var settoreInAttesa = false;
+function settoreAttesa() {
+  var s = $("selSettore"), o = s.querySelector('option[value="attesa"]');
+  if (!o) {
+    o = document.createElement("option");
+    o.value = "attesa"; o.disabled = true; o.textContent = "In attesa dello strumento…";
+    s.insertBefore(o, s.firstChild);
+  }
+  s.value = "attesa";
+  settoreInAttesa = true;
+}
 if (cfg.sola === "1") {
   ["selSettore", "fSettore"].forEach(function (id) {
     var e = $(id); if (e) { e.disabled = true; e.title = "Sola lettura: il settore lo imposta Ferdinando"; }
@@ -829,6 +847,7 @@ $("selUnita").addEventListener("change", function () {
   salvaCfg();
   dati = []; ricevuti = 0; trifase = true; conThd = true; gradiniVde = [];
   settorePendente = null;
+  settoreAttesa();
   $("sottotitolo").textContent = "ICO Scout " + this.value;
   var p = $("cliSd"), tx = $("cliSdTxt");
   if (p && tx) { p.className = "pill wait"; tx.textContent = "non ancora noto"; }
