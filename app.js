@@ -37,6 +37,13 @@ var cfg = leggiCfg();
 (function () {
   try {
     var q = new URLSearchParams(location.search);
+    /* 17/10/2026: ?unita=2 apre direttamente lo strumento ICO Scout 02
+       (combinabile: ?lettura=Piercarlo&unita=2) */
+    var un = parseInt(q.get("unita") || "", 10);
+    if (un >= 1 && un <= 99) {
+      cfg.topic = topicUnita(un); salvaCfg();
+      if (!q.get("lettura") && !q.has("completo")) history.replaceState(null, "", location.pathname);
+    }
     var chi = q.get("lettura");
     if (chi) {
       if (cfg.user !== chi) cfg.pass = "";
@@ -64,6 +71,15 @@ function leggiCfg() {
   return c;
 }
 function salvaCfg() { try { localStorage.setItem(CHIAVE, JSON.stringify(cfg)); } catch (e) {} }
+
+/* 17/10/2026: piu' strumenti. Unita' N -> icopower/impiantoNN/analizzatore */
+function topicUnita(n) {
+  return "icopower/impianto" + (n < 10 ? "0" : "") + n + "/analizzatore";
+}
+function unitaDaTopic(t) {
+  var m = /^icopower\/impianto(\d{2})\/analizzatore$/.exec(t || "");
+  return m ? m[1] : "";
+}
 
 /* ---------- stato ---------- */
 var MAX = 2000;               /* campioni tenuti in memoria: oltre un'ora a 2 s */
@@ -783,6 +799,44 @@ $("selSettore").addEventListener("change", function () {
   disegna();            /* nessuna riconnessione: cambia solo la stima del THDi */
 });
 
+/* ---------- strumento ICO Scout (17/10/2026) ---------- */
+/* Cambia solo il topic: broker, utente e password restano quelli impostati.
+   Al cambio si ripulisce tutto cio' che apparteneva all'unita' precedente. */
+function mostraUnita() {
+  var s = $("selUnita"), u = unitaDaTopic(cfg.topic);
+  if (!s) return;
+  var altro = s.querySelector('option[value="altro"]');
+  if (!u) {
+    if (!altro) {
+      altro = document.createElement("option");
+      altro.value = "altro"; altro.textContent = "Topic personalizzato";
+      s.appendChild(altro);
+    }
+    s.value = "altro";
+  } else {
+    if (!s.querySelector('option[value="' + u + '"]')) {
+      var o = document.createElement("option");
+      o.value = u; o.textContent = "ICO Scout " + u;
+      s.appendChild(o);
+    }
+    s.value = u;
+  }
+}
+mostraUnita();
+$("selUnita").addEventListener("change", function () {
+  if (this.value === "altro") return;
+  cfg.topic = topicUnita(parseInt(this.value, 10));
+  salvaCfg();
+  dati = []; ricevuti = 0; trifase = true; conThd = true; gradiniVde = [];
+  settorePendente = null;
+  $("sottotitolo").textContent = "ICO Scout " + this.value;
+  var p = $("cliSd"), tx = $("cliSdTxt");
+  if (p && tx) { p.className = "pill wait"; tx.textContent = "non ancora noto"; }
+  costruisciChips();
+  disegna();
+  collega();
+});
+
 /* ---------- finestre temporali ---------- */
 var FIN = [ [60, "1 min"], [300, "5 min"], [900, "15 min"], [3600, "1 ora"] ];
 $("finestre").innerHTML = FIN.map(function (f) {
@@ -875,6 +929,7 @@ $("btnSalva").addEventListener("click", function () {
   cfg.host  = $("fHost").value.trim().replace(/^\w+:\/\//, "").replace(/\/.*$/, "");
   cfg.porta = ($("fPorta").value.trim() || "9001").replace(/\D/g, "");
   cfg.topic = $("fTopic").value.trim() || CFG_DEF.topic;
+  mostraUnita();
   cfg.user  = $("fUser").value.trim();
   cfg.pass  = $("fPass").value;
   var settorePrima = cfg.settore;
