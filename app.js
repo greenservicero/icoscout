@@ -23,7 +23,7 @@ var CFG_DEF = {   /* copia ONLINE (GitHub Pages): predefinito il broker EMQX su 
   porta: "8084",
   topic: "icopower/impianto01/analizzatore",
   settore: "",
-  user:  "icoscout01",
+  user:  "ferdinando",   /* 18/10/2026: utente di chi guarda (prima icoscout01, l'utente dello strumento 1) */
   pass:  "",
   sola:  ""      /* "1" = sola lettura (colleghi): il settore non si puo' cambiare */
 };
@@ -50,7 +50,10 @@ var cfg = leggiCfg();
       cfg.user = chi; cfg.sola = "1"; salvaCfg();
       history.replaceState(null, "", location.pathname);
     } else if (q.has("completo")) {      /* torna alla versione con comandi */
-      cfg.user = CFG_DEF.user; cfg.pass = ""; cfg.sola = ""; salvaCfg();
+      /* 18/10/2026: la password si azzera solo se cambia l'utente; prima ogni
+         apertura con ?completo la cancellava e l'app non "ricordava" il collegamento */
+      if (cfg.user !== CFG_DEF.user) { cfg.user = CFG_DEF.user; cfg.pass = ""; }
+      cfg.sola = ""; salvaCfg();
       history.replaceState(null, "", location.pathname);
     }
   } catch (e) {}
